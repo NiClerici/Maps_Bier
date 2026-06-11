@@ -1,0 +1,690 @@
+/* =============================================================================
+   style.css — Bier-Karte Aarau · verspielt-lokales Redesign (mobile-first)
+   ============================================================================= */
+
+:root {
+  color-scheme: light; /* Tageslicht-Werkzeug: bewusst hell, kein Auto-Dark */
+
+  /* Bier-Palette, kontrast-geprüft (WCAG AA). Wärme trägt der Akzent + die
+     Schrift + die Marker — NICHT ein Creme-Hintergrund (siehe Anti-Referenzen).
+       --amber      = leuchtender Marken-Akzent, NUR mit dunklem Text (--ink) füllen
+       --amber-deep = tiefes Bernstein-Braun, als TEXT auf hellen Flächen (≥7:1 / Weiss) */
+  --amber:       #e8961c;  /* Füllfarbe: Buttons, aktiver Chip, gewählter Marker */
+  --amber-deep:  #7a4406;  /* Textfarbe: Preise, Zähler, Tagline, Loader, Pin */
+  --amber-soft:  #f4d8a0;  /* warmer Chip-Hintergrund (Fass-Badge) */
+
+  /* Flächen: saubere, fast-weisse Neutrale statt Creme/Papier-Beige */
+  --surface:     #ffffff;  /* Karten, Eingaben, Marker, Popup */
+  --paper:       #f7f6f4;  /* Chrome: Topbar + Sheet */
+  --cream:       #eae8e3;  /* ruhiger Neutral-Wash: Body, Sort-Track, Tags, Clear, Leerzustand */
+
+  --ink:         #241c14;  /* Haupttext (16.8:1 auf Weiss) */
+  --ink-soft:    #574b3e;  /* Sekundärtext, Tags (8.5:1 auf Weiss) */
+  --muted:       #6f6051;  /* Adressen, Placeholder, Mini-Labels (6:1 auf Weiss) */
+  --border:      #e6e1d8;
+  --green:       #13783d;  /* Alkoholfrei: Text & Badge-Fläche (AA gegen Weiss & green-bg) */
+  --green-bg:    #e6f5ec;
+  --slate:       #356299;  /* Flaschen-Badge */
+  --slate-bg:    #e7eef7;
+
+  /* Akzent-Schimmer als Token (statt verstreuter rgba-Literale) */
+  --amber-ring:  rgba(232, 150, 28, .42);
+  --amber-glow:  0 4px 12px rgba(122, 68, 6, .26);
+
+  --shadow-sm:   0 1px 2px rgba(40, 26, 8, .08);
+  --shadow:      0 6px 22px rgba(40, 26, 8, .13);
+  --shadow-lg:   0 -8px 34px rgba(30, 20, 6, .18);
+
+  --r-sm: 10px;
+  --r:    14px;
+  --r-lg: 22px;
+
+  --font-display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Semantische z-Index-Skala statt Magic Numbers */
+  --z-map:    1;
+  --z-sheet:  900;
+  --z-topbar: 1000;
+  --z-loader: 3000;
+
+  --tap: 44px;     /* Mindest-Touch-Ziel (WCAG 2.5.5, phone-first) */
+
+  --sheet-open: 4vh;  /* Versatz des offenen Sheets unter den Viewport-Rand (Bottom-Sheet) */
+}
+
+/* Sichtbarer, einheitlicher Tastatur-Fokus auf allen Bedien-Elementen.
+   :focus-visible -> nur bei Tastatur, nicht bei Maus/Touch. */
+:where(.chip, .sort-btn, .bar-card, .search-clear, .empty-reset, .grabber, .detail-back):focus-visible {
+  outline: 3px solid var(--amber-deep);
+  outline-offset: 2px;
+}
+#bierFilter:focus-visible { outline: none; } /* Ring liegt auf .search:focus-within */
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ---- Karte: vollflächig im Hintergrund ---- */
+#map {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #dfeaf0; /* Kachel-Platzhalter, bis Leaflet lädt */
+  z-index: var(--z-map);
+}
+
+/* etwas wärmere, ruhigere Kacheln */
+.leaflet-tile-pane { filter: saturate(.92) brightness(1.02); }
+.leaflet-container { font-family: var(--font-ui); background: #e4ebe4; }
+.leaflet-bar a, .leaflet-control-attribution { font-family: var(--font-ui); }
+
+/* =============================================================================
+   TOPBAR (schwebend oben)
+   ============================================================================= */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--z-topbar);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 12px;
+  background: linear-gradient(to bottom, var(--paper) 62%, rgba(247,246,244,0));
+  pointer-events: none;
+}
+.topbar > * { pointer-events: auto; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.brand-mark {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(122,68,6,.28)); /* amber-deep getönt, passt zur Palette */
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-name {
+  margin: 0;                /* <h1>-Default zurücksetzen */
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  line-height: 1.05;
+}
+.brand-sub {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--amber-deep);
+}
+
+/* ---- Suche ---- */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s, box-shadow .15s;
+}
+.search:focus-within {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 4px rgba(232,150,28,.16);
+}
+.search-icon {
+  width: 19px; height: 19px;
+  margin-left: 15px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  flex: 0 0 auto;
+}
+#bierFilter {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 13px 12px;
+  font: 600 15px/1 var(--font-ui);
+  color: var(--ink);
+  outline: none;
+}
+#bierFilter::placeholder { color: var(--muted); font-weight: 500; }
+.search-clear {
+  flex: 0 0 auto;
+  width: 28px; height: 28px;
+  margin-right: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--ink-soft);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .15s, color .15s;
+}
+
+/* ---- Filter-Chips (horizontal scrollbar auf mobil) ---- */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 8px 14px;
+  font: 600 13.5px/1 var(--font-ui);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .12s, background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+/* Hover nur auf echten Zeigegeräten — auf Touch bleibt :hover sonst „kleben“ */
+@media (hover: hover) {
+  .chip:hover { border-color: var(--amber); }
+  .bar-card:hover { border-color: var(--amber); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .search-clear:hover { background: var(--amber-soft); color: var(--amber-deep); }
+  .empty-reset:hover { filter: brightness(.95); }
+  .sort-btn:not(.active):hover { color: var(--ink); }
+  .detail-back:hover { background: var(--amber-soft); }
+}
+.chip:active { transform: scale(.96); }
+.chip.active {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--ink);            /* dunkler Text auf Amber: 7:1 statt 2.4:1 mit Weiss */
+  box-shadow: var(--amber-glow);
+}
+
+/* =============================================================================
+   SHEET (Bottom-Sheet mobil / Sidebar Desktop)
+   ============================================================================= */
+.sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: var(--z-sheet);
+  display: flex;
+  flex-direction: column;
+  height: 86vh;
+  background: var(--paper);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(var(--sheet-offset, 56vh));
+  transition: transform .34s cubic-bezier(.16, 1, .3, 1); /* ease-out-expo: sauberes Abbremsen, kein Nachfedern */
+  touch-action: none;
+}
+/* will-change nur während des Ziehens — sonst belegt es dauerhaft eine GPU-Ebene */
+.sheet.dragging { transition: none; will-change: transform; }
+.sheet.open { --sheet-offset: var(--sheet-open); }
+
+.grabber {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  padding: 0;
+}
+.grabber span {
+  display: block;
+  width: 44px; height: 5px;
+  border-radius: 999px;
+  background: var(--border);
+}
+.grabber:active { cursor: grabbing; }
+
+.sheet-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  flex-wrap: wrap;        /* viele Treffer: Sortierung rutscht unter den Zähler statt zu überlaufen */
+  padding: 2px 18px 12px;
+}
+.count {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;                /* <p>-Default zurücksetzen */
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+.count b { color: var(--amber-deep); }
+.sort { display: flex; gap: 4px; background: var(--cream); padding: 3px; border-radius: 999px; }
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  font: 600 12.5px/1 var(--font-ui);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.sort-btn.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+.sheet-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* + var(--sheet-open): das offene Sheet ragt um diesen Versatz unter den Viewport-Rand,
+     also muss die Scrollfläche zusätzlich so viel Boden-Padding bekommen, damit der letzte
+     Eintrag über die Falz + den Home-Indicator klettert (sonst abgeschnitten). */
+  padding: 0 12px calc(env(safe-area-inset-bottom, 0px) + var(--sheet-open) + 18px);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Bar-Karten ---- */
+.bar-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.bar-card {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 13px 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform .14s, box-shadow .14s, border-color .14s;
+  animation: cardIn .4s both;
+}
+/* Einblenden nur per Transform (kein opacity:0-Start) -> nie unsichtbar, falls Animation nicht läuft */
+@keyframes cardIn { from { transform: translateY(12px); } to { transform: none; } }
+.bar-card:active { transform: translateY(0) scale(.99); }
+.bar-card.selected {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-ring), var(--shadow);
+}
+
+.bar-card-body { flex: 1 1 auto; min-width: 0; }
+.bar-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16.5px;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  margin: 0 0 2px;
+  line-height: 1.15;
+  /* Sehr lange Namen ohne Leerzeichen umbrechen statt überlaufen (harden) */
+  overflow-wrap: anywhere;
+}
+.bar-addr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 9px;
+  overflow-wrap: anywhere;
+}
+.bar-addr svg { width: 12px; height: 12px; flex: 0 0 auto; fill: var(--muted); }
+.bar-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink-soft);
+}
+.tag.green { background: var(--green-bg); color: var(--green); }
+
+.bar-price {
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding-left: 12px;
+  border-left: 1.5px dashed var(--border);
+}
+.bar-price small { font-size: 10.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.bar-price b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--amber-deep);
+  line-height: 1.05;
+}
+.bar-price span { font-size: 10px; color: var(--muted); font-weight: 600; }
+
+/* ---- Leerer Zustand ---- */
+.empty { text-align: center; padding: 38px 24px 28px; }
+.empty-glass {
+  width: 50px; height: 50px;
+  color: var(--amber-deep);
+  animation: sway 3s ease-in-out infinite;
+}
+@keyframes sway { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+.empty-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin: 10px 0 4px; color: var(--ink); }
+.empty-sub { font-size: 13.5px; color: var(--muted); margin: 0 0 16px; }
+.empty-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--amber);
+  color: var(--ink);            /* dunkler Text auf Amber statt schwer lesbarem Weiss */
+  font: 700 13.5px/1 var(--font-ui);
+  min-height: var(--tap);
+  padding: 11px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: var(--amber-glow);
+  transition: filter .15s, transform .12s;
+}
+.empty-reset:active { transform: scale(.97); }
+
+/* =============================================================================
+   CUSTOM MARKER (divIcon)
+   ============================================================================= */
+/* 0×0-Anker am Geo-Punkt; der Pin wird absolut darüber zentriert (s. unten).
+   Dadurch klebt die Pfeilspitze bei jedem Zoom exakt auf der Koordinate. */
+.pin-wrap { width: 0; height: 0; }
+.pin {
+  position: absolute;
+  left: 0;
+  bottom: 9px;                  /* Pfeilspitze (~9px unter der Pill-Unterkante) trifft den Punkt */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: var(--surface);
+  border: 2px solid var(--amber);
+  border-radius: 999px;
+  box-shadow: 0 3px 9px rgba(40,26,8,.28); /* gleiche Schatten-Basis wie --shadow */
+  font: 800 13px/1 var(--font-display);
+  color: var(--amber-deep);
+  white-space: nowrap;
+  transform: translateX(-50%);  /* zentriert breitenunabhängig über dem Punkt */
+  transform-origin: bottom center;
+  transition: transform .16s, background .16s, color .16s, border-color .16s;
+}
+.pin::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -7px;
+  width: 11px; height: 11px;
+  background: var(--surface);
+  border-right: 2px solid var(--amber);
+  border-bottom: 2px solid var(--amber);
+  transform: translateX(-50%) rotate(45deg);
+  transition: background .16s, border-color .16s;
+}
+.pin-cur { font-size: 9px; font-weight: 700; color: var(--muted); }
+.marker-selected .pin {
+  background: var(--amber);
+  border-color: var(--amber-deep);
+  color: var(--ink);            /* dunkler Text auf Amber: lesbar im Tageslicht */
+  /* translateX(-50%) MUSS erhalten bleiben (transform ist nicht additiv), sonst springt der Pin */
+  transform: translateX(-50%) scale(1.16) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(122,68,6,.5);
+}
+.marker-selected .pin .pin-cur { color: rgba(36,28,20,.72); }
+.marker-selected .pin::after { background: var(--amber); border-color: var(--amber-deep); }
+.leaflet-marker-icon { background: transparent; border: 0; }
+/* Tastatur-Fokus auf dem (0×0) Marker -> sichtbarer Ring auf dem überlaufenden Pin */
+.pin-wrap:focus { outline: none; }
+.pin-wrap:focus-visible .pin { outline: 3px solid var(--amber-deep); outline-offset: 3px; }
+
+/* =============================================================================
+   DETAIL-ANSICHT (Bierliste einer Bar im Sheet / in der Sidebar)
+   ============================================================================= */
+/* Detail blendet Liste + Kopfzeile aus und nimmt deren Platz ein */
+.sheet.detail-open .sheet-head,
+.sheet.detail-open #barList { display: none; }
+
+.bar-detail { padding: 4px 0 2px; }
+
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--tap);
+  margin-bottom: 6px;
+  padding: 6px 12px 6px 8px;
+  border: 0;
+  background: var(--cream);
+  border-radius: 999px;
+  font: 600 13px/1 var(--font-ui);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s;
+}
+.detail-back svg {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round;
+}
+.detail-name {
+  margin: 2px 0 1px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.detail-name:focus { outline: none; } /* programmatischer Fokus (Ansage), kein sichtbarer Kasten */
+.detail-addr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 13px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.detail-addr svg { width: 12px; height: 12px; flex: 0 0 auto; fill: var(--muted); }
+
+.bier-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.bier-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 3px 8px;
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  background: var(--surface);   /* weisse Karten auf der Paper-Fläche des Sheets */
+  border: 1.5px solid var(--border);
+}
+/* Zustands-Flächen aus Marken-Tokens abgeleitet (kein Hex-Einzelfall) */
+.bier-item.cheapest { border-color: var(--amber); background: color-mix(in srgb, var(--amber) 9%, #fff); }
+.bier-item.alkfrei  { background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 32%, var(--green-bg)); }
+.bier-name { font-weight: 700; font-size: 14.5px; color: var(--ink); grid-column: 1; overflow-wrap: anywhere; }
+.bier-preis { font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--amber-deep); white-space: nowrap; grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+.bier-badges { grid-column: 1; display: flex; flex-wrap: wrap; gap: 4px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 999px; white-space: nowrap;
+}
+.badge-fass    { background: var(--amber-soft); color: var(--amber-deep); }
+.badge-flasche { background: var(--slate-bg);   color: var(--slate); }
+.badge-alkfrei { background: var(--green);      color: #fff; }
+.badge-best    { background: var(--amber);      color: var(--ink); }
+
+/* =============================================================================
+   LADE-OVERLAY  "wird gezapft …"
+   ============================================================================= */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 22px;
+  background: var(--cream);
+  transition: opacity .5s ease, visibility .5s;
+}
+.loader.hidden { opacity: 0; visibility: hidden; }
+.loader-glass {
+  position: relative;
+  width: 64px; height: 84px;
+  border: 4px solid var(--ink);
+  border-top: 0;
+  border-radius: 6px 6px 14px 14px;
+  background: #fff;
+  overflow: hidden;
+}
+/* Füllung & Schaum animieren NUR transform (kein height/bottom = kein Reflow, GPU-glatt) */
+.loader-beer {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 100%;
+  transform-origin: bottom center;
+  transform: scaleY(0);
+  background: linear-gradient(to top, var(--amber-deep), var(--amber));
+  animation: fill 2.1s ease-in-out infinite;
+}
+.loader-foam {
+  position: absolute;
+  left: 4px; right: 4px;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff7e6;
+  box-shadow: 0 0 0 3px #fff7e6;
+  bottom: 0;
+  opacity: 0;
+  transform: translateY(0);
+  animation: foam 2.1s ease-in-out infinite;
+}
+@keyframes fill { 0% { transform: scaleY(0); } 55% { transform: scaleY(.74); } 100% { transform: scaleY(.74); } }
+@keyframes foam {
+  0%,35% { opacity: 0; transform: translateY(0); }
+  60%    { opacity: 1; transform: translateY(-55px); }
+  100%   { opacity: 1; transform: translateY(-55px); }
+}
+.loader-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--amber-deep);
+  margin: 0;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+.loader-text::after { content: ""; animation: dots 1.4s steps(4,end) infinite; }
+@keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+/* CDN-Fehlermeldung (von app.js) */
+.map-error {
+  max-width: 520px; margin: 90px auto; padding: 24px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--shadow);
+  font: 15px/1.55 var(--font-ui); color: var(--ink);
+}
+.map-error h2 { font-family: var(--font-display); margin: 0 0 8px; color: var(--amber-deep); }
+
+/* =============================================================================
+   TOUCH: Bedien-Ziele auf >= 44px (WCAG 2.5.5), nur auf groben Zeigern.
+   Maus/Trackpad (pointer: fine) behält die kompaktere Dichte.
+   ============================================================================= */
+@media (pointer: coarse) {
+  .chip       { min-height: var(--tap); padding-block: 10px; }
+  .sort-btn   { min-height: var(--tap); padding: 0 16px; }
+  .sort       { padding: 4px; }
+  .search-clear { width: 38px; height: 38px; margin-right: 4px; }
+  #bierFilter { padding-block: 15px; }
+  .grabber    { height: var(--tap); }
+}
+
+/* =============================================================================
+   DESKTOP: Sidebar-Layout (>= 920px)
+   ============================================================================= */
+@media (min-width: 920px) {
+  body { overflow: hidden; }
+
+  .topbar {
+    width: 392px;
+    right: auto;
+    background: var(--paper);
+    border-right: 1.5px solid var(--border);
+    padding: 20px 18px 14px;
+    gap: 13px;
+    box-shadow: var(--shadow);
+  }
+  .brand-name { font-size: 23px; }
+
+  #map { left: 392px; width: auto; }
+
+  .chips { flex-wrap: wrap; overflow: visible; }
+
+  .sheet {
+    top: auto;
+    left: 0;
+    width: 392px;
+    right: auto;
+    height: auto;
+    bottom: 0;
+    /* bis unter die Topbar; top per JS */
+    top: var(--sidebar-top, 188px);
+    transform: none !important;
+    border-radius: 0;
+    border-right: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    background: var(--paper);
+  }
+  .grabber { display: none; }
+  .sheet-head { padding-top: 12px; border-top: 1.5px solid var(--border); }
+  .sheet-scroll { padding-bottom: 18px; }
+}
+
+/* feinere Stelle für sehr breite Screens */
+@media (min-width: 1300px) {
+  .topbar, .sheet { width: 420px; }
+  #map { left: 420px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::after, *::before { animation-duration: .001ms !important; transition-duration: .05ms !important; }
+}

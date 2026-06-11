@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Welche Aarauer Beiz zapft dein Bier – vom Fass oder aus der Flasche – und was kostet es? Karte mit Preisen, Filter und Suche." />
+  <meta name="theme-color" content="#f7f6f4" />
+  <title>Bier-Karte Aarau</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Vollflächige Karte im Hintergrund -->
+  <main id="map" aria-label="Karte mit Bars in Aarau"></main>
+
+  <!-- Schwebende Kopfzeile: Marke + Suche + Filter-Chips -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🍺</span>
+      <span class="brand-text">
+        <h1 class="brand-name">Bier-Karte Aarau</h1>
+        <span class="brand-sub">Wo zapft's am günstigsten?</span>
+      </span>
+    </div>
+
+    <div class="search">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input
+        list="bierliste"
+        id="bierFilter"
+        type="text"
+        placeholder="Bier suchen – z.B. Guinness"
+        aria-label="Bier suchen"
+        autocomplete="off"
+      />
+      <button type="button" id="searchClear" class="search-clear" aria-label="Suche löschen" hidden>×</button>
+      <datalist id="bierliste"></datalist>
+    </div>
+
+    <div class="chips" role="group" aria-label="Nach Ausschank filtern">
+      <button type="button" class="chip active" data-mode="alle" aria-pressed="true">Alle</button>
+      <button type="button" class="chip" data-mode="fass" aria-pressed="false">Fass</button>
+      <button type="button" class="chip" data-mode="flasche" aria-pressed="false">Flasche</button>
+      <button type="button" class="chip" data-mode="alkfrei" aria-pressed="false">Alkoholfrei</button>
+    </div>
+  </header>
+
+  <!-- Bottom-Sheet (mobil) / Seitenliste (Desktop) -->
+  <section class="sheet" id="sheet" aria-label="Liste der Bars">
+    <button type="button" class="grabber" id="grabber" aria-label="Liste ein- oder ausklappen" aria-expanded="false" aria-controls="sheetScroll"><span></span></button>
+
+    <div class="sheet-head">
+      <p class="count" id="count" role="status" aria-live="polite" aria-atomic="true">Beizen werden geladen …</p>
+      <div class="sort" role="group" aria-label="Sortierung">
+        <button type="button" class="sort-btn active" data-sort="preis" aria-pressed="true">Günstigste</button>
+        <button type="button" class="sort-btn" data-sort="name" aria-pressed="false">A–Z</button>
+      </div>
+    </div>
+
+    <div class="sheet-scroll" id="sheetScroll">
+      <ul class="bar-list" id="barList"></ul>
+
+      <!-- Detail-Ansicht einer Bar (ersetzt die Liste, wenn ein Pin/Karte gewählt ist) -->
+      <div class="bar-detail" id="barDetail" role="region" aria-labelledby="detailName" hidden>
+        <button type="button" class="detail-back" id="detailBack">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          Alle Beizen
+        </button>
+        <h2 class="detail-name" id="detailName" tabindex="-1"></h2>
+        <p class="detail-addr" id="detailAddr"></p>
+        <ul class="bier-list" id="detailBiere"></ul>
+      </div>
+
+      <div class="empty" id="empty" hidden>
+        <svg class="empty-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <path d="M7 4h10l-1.2 15.4a1.4 1.4 0 0 1-1.4 1.3H9.6a1.4 1.4 0 0 1-1.4-1.3L7 4Z"/>
+          <path d="M7.4 8.6h9.2"/>
+        </svg>
+        <p class="empty-title">Keine Beiz passt dazu</p>
+        <p class="empty-sub">Probier einen anderen Filter oder lösch die Suche.</p>
+        <button type="button" class="empty-reset" id="emptyReset">Filter zurücksetzen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lade-Overlay: "wird gezapft …" -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-glass">
+      <div class="loader-beer"></div>
+      <div class="loader-foam"></div>
+    </div>
+    <p class="loader-text">Wird gezapft …</p>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="bars.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,21 +1,3 @@
-/* =============================================================================
-   bars.js — DATEN DER BIER-KARTE AARAU
-   =============================================================================
-
-   >>> HIER neue Bars / Biere / Preise eintragen <<<
-
-   Jede Bar ist ein Objekt mit:
-     name     : Anzeigename der Bar
-     adresse  : "Strasse Nr, Aarau"
-     lat, lng : Koordinaten (Innenstadt Aarau ~ 47.391, 8.045)
-     biere    : Liste von Bieren, je:
-        name        : Biername (echte Marke verwenden, z.B. "Guinness")
-        offen       : true  = offen ausgeschenkt erhältlich, sonst false
-        flasche     : true  = in Flasche erhältlich, sonst false
-        preis       : Zahl in CHF, z.B. 7.50  (NICHT als String!)
-        alkoholfrei : true  = alkoholfreies Bier, sonst false
-   ============================================================================= */
-
 window.BARS = [
   {
     name: "Platzhirsch",

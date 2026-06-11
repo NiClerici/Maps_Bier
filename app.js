@@ -1,9 +1,3 @@
-/* =============================================================================
-   app.js — Bier-Karte Aarau · Logik (Karte, Marker, Liste, Filter, Sheet)
-   Daten kommen aus bars.js (window.BARS). Nur bars.js anfassen, um Inhalte
-   zu pflegen — Marker, Liste und Suche erzeugen sich daraus automatisch.
-   ============================================================================= */
-
 (function () {
   "use strict";
 

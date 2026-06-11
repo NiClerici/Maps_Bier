@@ -688,3 +688,22 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::after, *::before { animation-duration: .001ms !important; transition-duration: .05ms !important; }
 }
+
+/* =============================================================================
+   DISCLAIMER: dezenter Footer unten in der Liste
+   ============================================================================= */
+.disclaimer {
+  margin-top: 14px;
+  padding: 14px 4px 4px;
+  border-top: 1.5px solid var(--border);
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.55;
+  text-align: center;
+}
+.disclaimer a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.disclaimer a:hover { color: var(--ink); }

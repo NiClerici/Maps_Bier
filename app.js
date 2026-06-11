@@ -372,6 +372,21 @@
   var sheetOpen = false;
 
   function vh(n) { return window.innerHeight * n / 100; }
+
+  /* Offener Ruhe-Versatz des Sheets: Oberkante knapp UNTER die Topbar, damit der
+     Grabber sichtbar + ziehbar bleibt. Die Topbar-Höhe (inkl. env(safe-area-inset-top))
+     wird live gemessen — ein fixer Wert würde Notch-Geräte verdecken.
+       naturalTop = innerHeight - Sheet-Höhe  (= 14vh aus height:86vh)
+       want       = Topbar-Unterkante + Gap − naturalTop
+     Nach unten auf vh(4) geklemmt (falls Topbar mal kürzer als naturalTop). */
+  function openOffset() {
+    var topbar = document.querySelector(".topbar");
+    var naturalTop = window.innerHeight - sheet.offsetHeight;
+    var want = (topbar ? topbar.offsetHeight : 0) + 8 - naturalTop;
+    return Math.min(Math.max(want, vh(4)), vh(56));
+  }
+  function closedOffset() { return vh(56); }   /* Peek-Höhe (Sheet zu) */
+
   function setSheetOpen(open) {
     sheetOpen = open;
     sheet.classList.toggle("open", open);
@@ -383,7 +398,7 @@
   var pointerHandled = false; /* unterscheidet Zeiger-Tipp von Tastatur-Klick */
   function onDown(e) {
     if (window.matchMedia("(min-width: 920px)").matches) return;
-    drag = { startY: e.clientY, base: sheetOpen ? vh(4) : vh(56), moved: 0 };
+    drag = { startY: e.clientY, base: sheetOpen ? openOffset() : closedOffset(), moved: 0 };
     sheet.classList.add("dragging");
     grabber.setPointerCapture && grabber.setPointerCapture(e.pointerId);
   }
@@ -391,7 +406,7 @@
     if (!drag) return;
     var dy = e.clientY - drag.startY;
     drag.moved = Math.abs(dy);
-    var off = Math.min(Math.max(drag.base + dy, vh(4)), vh(56));
+    var off = Math.min(Math.max(drag.base + dy, openOffset()), closedOffset());
     sheet.style.transform = "translateY(" + off + "px)";
   }
   function onUp() {
@@ -399,8 +414,8 @@
     sheet.classList.remove("dragging");
     if (drag.moved < 6) { setSheetOpen(!sheetOpen); }
     else {
-      var current = parseFloat((sheet.style.transform.match(/[-\d.]+/) || [vh(56)])[0]);
-      setSheetOpen(current < vh(30));
+      var current = parseFloat((sheet.style.transform.match(/[-\d.]+/) || [closedOffset()])[0]);
+      setSheetOpen(current < (openOffset() + closedOffset()) / 2);
     }
     drag = null;
     pointerHandled = true; /* der folgende click stammt aus dieser Geste -> ignorieren */
@@ -423,6 +438,11 @@
     if (window.matchMedia("(min-width: 920px)").matches) {
       var tb = document.querySelector(".topbar");
       document.documentElement.style.setProperty("--sidebar-top", tb.offsetHeight + "px");
+    } else {
+      /* Mobil: offene Sheet-Position an die gemessene Topbar-Höhe koppeln, damit der
+         Grabber unter den Filter-Chips sichtbar bleibt. Treibt auch das Boden-Padding
+         der Scrollfläche (style.css: var(--sheet-open)). */
+      document.documentElement.style.setProperty("--sheet-open", openOffset() + "px");
     }
     map.invalidateSize();
   }

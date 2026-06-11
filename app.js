@@ -23,7 +23,7 @@
   }
 
   /* ---- Karte ---- */
-  var map = L.map("map", { zoomControl: false }).setView([47.3905, 8.0455], 16);
+  var map = L.map("map", { zoomControl: false }).setView([47.392791222202355, 8.043671545551746], 16); 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   var tiles = L.tileLayer(
@@ -64,7 +64,7 @@
   var selectedBar = null;
 
   function beerMatchesMode(b) {
-    if (mode === "fass") return b.fass === true;
+    if (mode === "offen") return b.offen === true;
     if (mode === "flasche") return b.flasche === true;
     if (mode === "alkfrei") return b.alkoholfrei === true;
     return true;
@@ -91,7 +91,7 @@
       .map(function (b) {
         var badges = "";
         if (b.preis === min) badges += '<span class="badge badge-best">★ Günstigstes</span>';
-        if (b.fass) badges += '<span class="badge badge-fass">Fass</span>';
+        if (b.offen) badges += '<span class="badge badge-offen">Offen</span>';
         if (b.flasche) badges += '<span class="badge badge-flasche">Flasche</span>';
         if (b.alkoholfrei) badges += '<span class="badge badge-alkfrei">Alkfrei</span>';
         var cls = "bier-item" + (b.alkoholfrei ? " alkfrei" : (b.preis === min ? " cheapest" : ""));
@@ -165,7 +165,7 @@
 
     var tags =
       '<span class="tag">' + beers.length + (beers.length === 1 ? " Bier" : " Biere") + "</span>" +
-      (beers.some(function (b) { return b.fass; }) ? '<span class="tag">Fass</span>' : "") +
+      (beers.some(function (b) { return b.offen; }) ? '<span class="tag">Offen</span>' : "") +
       (beers.some(function (b) { return b.flasche; }) ? '<span class="tag">Flasche</span>' : "") +
       (hasAlk ? '<span class="tag green">Alkoholfrei</span>' : "");
 

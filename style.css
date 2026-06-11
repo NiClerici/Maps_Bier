@@ -11,7 +11,7 @@
        --amber-deep = tiefes Bernstein-Braun, als TEXT auf hellen Flächen (≥7:1 / Weiss) */
   --amber:       #e8961c;  /* Füllfarbe: Buttons, aktiver Chip, gewählter Marker */
   --amber-deep:  #7a4406;  /* Textfarbe: Preise, Zähler, Tagline, Loader, Pin */
-  --amber-soft:  #f4d8a0;  /* warmer Chip-Hintergrund (Fass-Badge) */
+  --amber-soft:  #f4d8a0;  /* warmer Chip-Hintergrund (Offen-Badge) */
 
   /* Flächen: saubere, fast-weisse Neutrale statt Creme/Papier-Beige */
   --surface:     #ffffff;  /* Karten, Eingaben, Marker, Popup */
@@ -547,7 +547,7 @@ body {
   font-size: 10px; font-weight: 700;
   padding: 2px 6px; border-radius: 999px; white-space: nowrap;
 }
-.badge-fass    { background: var(--amber-soft); color: var(--amber-deep); }
+.badge-offen   { background: var(--amber-soft); color: var(--amber-deep); }
 .badge-flasche { background: var(--slate-bg);   color: var(--slate); }
 .badge-alkfrei { background: var(--green);      color: #fff; }
 .badge-best    { background: var(--amber);      color: var(--ink); }

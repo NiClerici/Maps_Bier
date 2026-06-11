@@ -55,5 +55,23 @@ window.BARS = [
       { name: "Birra Messina",              offen: false, flasche: true,  preis: 9.00, alkoholfrei: false },
       { name: "Kitchenbrew Windstill Neipa",offen: false, flasche: true,  preis: 6.00, alkoholfrei: true  }
     ]
+  },
+  {
+    name: "Theo",
+    adresse: "Pelzgasse 29, Aarau",
+    lat: 47.39235149525987,
+    lng: 8.044456014723215,
+    biere: [
+      // OFFEN (Stange = 3 dl)
+      { name: "Erusbacher Urtyp",                     offen: true,  flasche: false, preis: 4.80, alkoholfrei: false },
+      // FLASCHEN (3.3 dl)
+      { name: "Lägerebräu Original",                  offen: false, flasche: true,  preis: 6.00, alkoholfrei: false },
+      { name: "Lägerebräu Stella Maris",              offen: false, flasche: true,  preis: 7.00, alkoholfrei: false },
+      { name: "Lägerebräu Pale Ale",                  offen: false, flasche: true,  preis: 7.00, alkoholfrei: false },
+      { name: "Lägerebräu Indian Pale Ale",           offen: false, flasche: true,  preis: 7.00, alkoholfrei: false },
+      { name: "Lägerebräu Weizen",                    offen: false, flasche: true,  preis: 8.00, alkoholfrei: false },
+      { name: "Lägerebräu Federleicht",               offen: false, flasche: true,  preis: 5.50, alkoholfrei: true  },
+      { name: "Lägerebräu Barrique Blend Cognac Imperial Stout", offen: false, flasche: true, preis: 11.50, alkoholfrei: false }
+    ]
   }
 ];

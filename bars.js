@@ -63,7 +63,7 @@ window.BARS = [
     lng: 8.049225338836765,
     biere: [
       // OFFEN / ON TAP (kleinere Grösse: 2.5/3.3 dl)
-      { name: "Feldschlösschen Original",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Feldschlösschen Lager",              offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Feldschlösschen Helvetic",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Feldschlösschen Braufrisch",         offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
       { name: "Panaché",                            offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
@@ -89,6 +89,26 @@ window.BARS = [
       { name: "Feldschlösschen Alkoholfrei",        offen: false, flasche: true,  preis: 6.20, alkoholfrei: true },
       { name: "Guinness 0.0",                       offen: false, flasche: true,  preis: 8.60, alkoholfrei: true },
       { name: "Schneider Weisse Alkoholfrei",       offen: false, flasche: true,  preis: 7.80, alkoholfrei: true, groesse: "0.5 l" }
+    ]
+  },
+  {
+    name: "Tuchlaube Café Bar",
+    adresse: "Metzgergasse 18, 5000 Aarau",
+    lat: 47.394061022366174,
+    lng: 8.043920880739948,
+    biere: [
+      // OFFEN (Preis = 3 dl)
+      { name: "Boxer",                      offen: true,  flasche: false, preis: 5.50, alkoholfrei: false },
+      { name: "Saisonales Bier",            offen: true,  flasche: false, preis: 6.00, alkoholfrei: false },
+      // FLASCHEN (3.3 dl)
+      { name: "Tuchlaube Lager",            offen: false, flasche: true,  preis: 6.50, alkoholfrei: false },
+      { name: "Stadtwächter Irma Golden Ale", offen: false, flasche: true, preis: 8.00, alkoholfrei: false },
+      { name: "Köhler-Bier Amber",          offen: false, flasche: true,  preis: 7.00, alkoholfrei: false },
+      { name: "Appenzeller IPA",            offen: false, flasche: true,  preis: 7.50, alkoholfrei: false },
+      { name: "Appenzeller Weizenbier",     offen: false, flasche: true,  preis: 8.50, alkoholfrei: false, groesse: "0.5 l" },
+      // ALKOHOLFREI
+      { name: "Chopfab Bleifrei Pale Ale",  offen: false, flasche: true,  preis: 6.50, alkoholfrei: true },
+      { name: "Birra Moretti Zero",         offen: false, flasche: true,  preis: 6.50, alkoholfrei: true }
     ]
   }
 ];

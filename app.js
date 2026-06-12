@@ -199,8 +199,14 @@
       return cheapest(matchingBeers(a.bar)) - cheapest(matchingBeers(b.bar));
     });
 
-    /* Zähler */
-    var beerCount = visible.reduce(function (s, e) { return s + matchingBeers(e.bar).length; }, 0);
+    /* Zähler: verschiedene Biere (nicht Angebote) — dasselbe Bier in mehreren Beizen
+       zählt nur 1×. Pro Bar-Karte bleibt es die Angebots-Zahl (keine Bar-übergreifende
+       Dopplung dort). */
+    var nameSet = {};
+    visible.forEach(function (e) {
+      matchingBeers(e.bar).forEach(function (b) { nameSet[b.name] = true; });
+    });
+    var beerCount = Object.keys(nameSet).length;
     countEl.innerHTML = visible.length
       ? "<b>" + visible.length + "</b> " + (visible.length === 1 ? "Beiz" : "Beizen") +
         " · " + beerCount + (beerCount === 1 ? " Bier" : " Biere")

@@ -83,7 +83,9 @@
     var min = cheapest(beers);
     return beers.slice().sort(function (a, b) { return a.preis - b.preis; })
       .map(function (b) {
+        var isHit = selectedBeer && b.name === selectedBeer;   // aktiver Such-Treffer
         var badges = "";
+        if (isHit) badges += '<span class="badge badge-hit"><svg class="badge-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>Gesucht</span>';
         if (b.preis === min) badges += '<span class="badge badge-best">★ Günstigstes</span>';
         /* Grösse direkt nach dem Preis-Stern: sie verändert, wie der Preis zu lesen ist
            (Default = Stange 3 dl) — darum vor Offen/Flasche und als kräftiges Chip. */
@@ -91,9 +93,9 @@
         if (b.offen) badges += '<span class="badge badge-offen">Offen</span>';
         if (b.flasche) badges += '<span class="badge badge-flasche">Flasche</span>';
         if (b.alkoholfrei) badges += '<span class="badge badge-alkfrei">Alkfrei</span>';
-        var cls = "bier-item" + (b.alkoholfrei ? " alkfrei" : (b.preis === min ? " cheapest" : ""));
+        var cls = "bier-item" + (isHit ? " is-search-hit" : "") + (b.preis === min ? " cheapest" : "");
         return (
-          '<li class="' + cls + '">' +
+          '<li class="' + cls + '"' + (isHit ? ' aria-current="true"' : "") + ">" +
             '<span class="bier-name">' + esc(b.name) + "</span>" +
             '<span class="bier-preis">CHF ' + formatPreis(b.preis) + "</span>" +
             '<span class="bier-badges">' + badges + "</span>" +
@@ -294,13 +296,30 @@
     detailBiere.innerHTML = biereListHtml(bar);
   }
 
+  /* Bei aktiver Bier-Suche das gesuchte Bier in den sichtbaren Bereich scrollen,
+     statt die Detailliste nur von oben zu zeigen. getBoundingClientRect-Delta ist
+     robust gegen den offsetParent (verschachtelte Scrollfläche + Bottom-Sheet). */
+  function scrollDetailToHit() {
+    if (!selectedBeer) return false;
+    var hit = detailBiere.querySelector(".is-search-hit");
+    if (!hit) return false;
+    var hr = hit.getBoundingClientRect(), sr = scrollEl.getBoundingClientRect();
+    var target = Math.max(0, scrollEl.scrollTop + (hr.top - sr.top) - 12);
+    /* Weich von der Baseline (oben) zum Treffer gleiten -> man sieht, dass oben noch
+       Biere stehen. Bei prefers-reduced-motion sofort springen. */
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    scrollEl.scrollTo({ top: target, behavior: reduce ? "auto" : "smooth" });
+    return true;
+  }
+
   /* Detail-Ansicht im Sheet öffnen (Bierliste, scrollbar) */
   function openDetail(bar) {
     if (detailEl.hidden) listScrollTop = scrollEl.scrollTop; // nur beim Wechsel Liste -> Detail merken
     renderDetail(bar);
     detailEl.hidden = false;
     sheet.classList.add("detail-open");
-    scrollEl.scrollTop = 0;                       // Detail immer von oben anzeigen
+    scrollEl.scrollTop = 0;                       // Baseline: Detail von oben
+    scrollDetailToHit();                          // bei Bier-Suche zum Treffer scrollen
     detailName.focus({ preventScroll: true });    // Überschrift = Bar-Name wird angesagt
   }
 

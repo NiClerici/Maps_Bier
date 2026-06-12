@@ -69,6 +69,7 @@ body {
   color: var(--ink);
   background: var(--cream);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;   /* graues iOS-Tap-Flackern weg — :active trägt das Feedback */
   overflow: hidden;
 }
 
@@ -159,7 +160,7 @@ body {
   border: 0;
   background: transparent;
   padding: 13px 12px;
-  font: 600 15px/1 var(--font-ui);
+  font: 600 16px/1 var(--font-ui);   /* 16px: verhindert iOS-Safari Auto-Zoom beim Fokus */
   color: var(--ink);
   outline: none;
 }
@@ -587,8 +588,11 @@ body {
   border: 1.5px solid var(--border);
 }
 /* Zustands-Flächen aus Marken-Tokens abgeleitet (kein Hex-Einzelfall) */
-.bier-item.cheapest { border-color: var(--amber); background: color-mix(in srgb, var(--amber) 9%, #fff); }
-.bier-item.alkfrei  { background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 32%, var(--green-bg)); }
+.bier-item.cheapest { background: color-mix(in srgb, var(--amber) 9%, #fff); }   /* nur zarter Tint, neutraler Rand — das ★-Badge trägt die Bedeutung */
+/* Alkoholfrei wird allein durch das grüne „Alkfrei"-Badge markiert (keine Zeilen-Fläche),
+   damit das Günstigstes-Highlight die Hierarchie nicht mit Grün teilen muss. */
+/* Such-Treffer: Amber-Ring (Selektions-Farbe der App), liegt über cheapest/alkfrei-Flächen */
+.bier-item.is-search-hit { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-ring); }
 .bier-name { font-weight: 700; font-size: 14.5px; color: var(--ink); grid-column: 1; overflow-wrap: anywhere; }
 .bier-preis { font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--amber-deep); white-space: nowrap; grid-column: 2; grid-row: 1 / span 2; align-self: center; }
 .bier-badges { grid-column: 1; display: flex; flex-wrap: wrap; gap: 4px; }
@@ -601,6 +605,10 @@ body {
 .badge-flasche { background: var(--slate-bg);   color: var(--slate); }
 .badge-alkfrei { background: var(--green);      color: #fff; }
 .badge-best    { background: var(--amber);      color: var(--ink); }
+/* Such-Treffer: Outline-Pille mit Lupe — bewusst anders als das gefüllte
+   ★-Günstigstes-Badge, damit beide nebeneinander unterscheidbar bleiben. */
+.badge-hit     { background: var(--surface); color: var(--amber-deep); box-shadow: inset 0 0 0 1.5px var(--amber); }
+.badge-ico     { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; flex: 0 0 auto; }
 /* Grösse: kräftiges, gefülltes Chip (dunkles Bernstein, weisser Text ≥7:1).
    Bewusst lauter als die Outline-Variante — die Grösse verändert die Preislesart. */
 .badge-groesse { background: var(--amber-deep); color: #fff; }

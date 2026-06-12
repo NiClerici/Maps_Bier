@@ -85,6 +85,9 @@
       .map(function (b) {
         var badges = "";
         if (b.preis === min) badges += '<span class="badge badge-best">★ Günstigstes</span>';
+        /* Grösse direkt nach dem Preis-Stern: sie verändert, wie der Preis zu lesen ist
+           (Default = Stange 3 dl) — darum vor Offen/Flasche und als kräftiges Chip. */
+        if (b.groesse) badges += '<span class="badge badge-groesse" title="Grösseres Gebinde – Preis gilt für ' + esc(b.groesse) + ', nicht für eine Stange (3 dl)">' + esc(b.groesse) + "</span>";
         if (b.offen) badges += '<span class="badge badge-offen">Offen</span>';
         if (b.flasche) badges += '<span class="badge badge-flasche">Flasche</span>';
         if (b.alkoholfrei) badges += '<span class="badge badge-alkfrei">Alkfrei</span>';

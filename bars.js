@@ -55,5 +55,40 @@ window.BARS = [
       { name: "Lägerebräu Federleicht",               offen: false, flasche: true,  preis: 5.50, alkoholfrei: true  },
       { name: "Lägerebräu Barrique Blend Cognac Imperial Stout", offen: false, flasche: true, preis: 11.50, alkoholfrei: false }
     ]
+  },
+  {
+    name: "The Penny",
+    adresse: "Bahnhofstrasse 57, 5000 Aarau",
+    lat: 47.391809944596076,
+    lng: 8.049225338836765,
+    biere: [
+      // OFFEN / ON TAP (kleinere Grösse: 2.5/3.3 dl)
+      { name: "Feldschlösschen Original",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Feldschlösschen Helvetic",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Feldschlösschen Braufrisch",         offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Feldschlösschen Panaché",            offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Kronenburg 1664 Blanc",              offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Valaisanne Pale Ale",                offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Super Bock Lager",                   offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Brooklyn Stonewall IPA",             offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Guinness",                           offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Guinness IPA",                       offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Guinness Hop House 13 Lager",        offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Kilkenny Irish Red Ale",             offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Smithwicks",                         offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Grimbergen Blonde",                  offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Grimbergen Season",                  offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      { name: "Magners Apple Cider",                offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
+      // FLASCHEN
+      { name: "Magners Pear Cider",                 offen: false, flasche: true,  preis: 10.50, alkoholfrei: false, groesse: "0.5 l" },
+      { name: "Magners Berry Cider",                offen: false, flasche: true,  preis: 10.50, alkoholfrei: false, groesse: "0.5 l" },
+      { name: "Schneider Weisse",                   offen: false, flasche: true,  preis: 8.50, alkoholfrei: false, groesse: "0.5 l" },
+      { name: "Super Bock Gluten Free",             offen: false, flasche: true,  preis: 7.50, alkoholfrei: false },
+      { name: "Smirnoff Ice",                       offen: false, flasche: true,  preis: 7.50, alkoholfrei: false },
+      // ALKOHOLFREI
+      { name: "Feldschlösschen Original Alkoholfrei", offen: false, flasche: true, preis: 6.20, alkoholfrei: true },
+      { name: "Guinness 0.0",                       offen: false, flasche: true,  preis: 8.60, alkoholfrei: true },
+      { name: "Schneider Weisse A.F.",              offen: false, flasche: true,  preis: 7.80, alkoholfrei: true, groesse: "0.5 l" }
+    ]
   }
 ];

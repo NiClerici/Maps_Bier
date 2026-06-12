@@ -601,6 +601,19 @@ body {
 .badge-flasche { background: var(--slate-bg);   color: var(--slate); }
 .badge-alkfrei { background: var(--green);      color: #fff; }
 .badge-best    { background: var(--amber);      color: var(--ink); }
+/* Grösse: kräftiges, gefülltes Chip (dunkles Bernstein, weisser Text ≥7:1).
+   Bewusst lauter als die Outline-Variante — die Grösse verändert die Preislesart. */
+.badge-groesse { background: var(--amber-deep); color: #fff; }
+.badge-groesse::before { content: "↑ "; font-weight: 800; }
+
+/* Grössen-Hinweis über der Bierliste: erklärt die Default-Grösse (Stange 3 dl),
+   damit das 0.5-l-Chip einen Bezug hat. */
+.bier-note {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
 
 /* =============================================================================
    LADE-OVERLAY  "wird gezapft …"

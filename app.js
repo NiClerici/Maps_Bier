@@ -99,15 +99,26 @@
       }).join("");
   }
 
-  /* ---- Marker mit Preis-Tag ---- */
-  function makeIcon(bar) {
+  /* Tiefster Preis einer Bar im aktuellen Filter (Basis für Pin-Label + Stapelung) */
+  function barPrice(bar) {
     var beers = matchingBeers(bar);
-    var price = beers.length ? cheapest(beers) : cheapest(bar.biere);
+    return beers.length ? cheapest(beers) : cheapest(bar.biere);
+  }
+  /* Stabile Stapel-Reihenfolge: günstiger = weiter vorne. Macht die Überlappung
+     deterministisch (statt zufälliger DOM-Reihenfolge) — der bessere Deal liegt
+     bei dicht beieinander liegenden Beizen immer oben + lesbar. */
+  function zFor(bar) { return Math.round((30 - barPrice(bar)) * 100); }
+
+  /* ---- Marker mit Preis-Tag ---- */
+  function makeIcon(bar, price, isBest) {
+    if (price == null) price = barPrice(bar);
     return L.divIcon({
       className: "pin-wrap",
       html:
-        '<div class="pin">' +
-        formatPreis(price) + '<span class="pin-cur">CHF</span></div>',
+        '<div class="pin' + (isBest ? " pin-best" : "") + '">' +
+          (isBest ? '<span class="pin-star" aria-hidden="true">★</span>' : "") +
+          formatPreis(price) + '<span class="pin-cur">CHF</span>' +
+        "</div>",
       iconSize: [0, 0],   // 0×0-Anker: Wrapper-Ursprung liegt exakt auf der Koordinate
       iconAnchor: [0, 0]  // Pin wird per CSS (translateX -50%) mittig darüber gehängt
     });
@@ -209,10 +220,19 @@
 
   /* ---- Marker ein-/ausblenden + Icons aktualisieren ---- */
   function applyMarkers() {
+    /* Günstigster Preis aller sichtbaren Treffer -> dieser Pin bekommt den ★-Akzent */
+    var globalMin = Infinity;
     entries.forEach(function (e) {
-      var show = matchingBeers(e.bar).length > 0;
-      if (show) {
-        e.marker.setIcon(makeIcon(e.bar));
+      var beers = matchingBeers(e.bar);
+      if (beers.length) { var c = cheapest(beers); if (c < globalMin) globalMin = c; }
+    });
+
+    entries.forEach(function (e) {
+      var beers = matchingBeers(e.bar);
+      if (beers.length) {
+        var price = cheapest(beers);
+        e.marker.setIcon(makeIcon(e.bar, price, price === globalMin));
+        e.marker.setZIndexOffset(zFor(e.bar));      // günstiger = oben, deterministisch
         if (!e.visible) { e.marker.addTo(map); e.visible = true; }
         if (e.bar === selectedBar) markSelectedMarker(e);
       } else if (e.visible) {
@@ -224,8 +244,12 @@
   function markSelectedMarker(entry) {
     entries.forEach(function (e) {
       if (e.marker._icon) e.marker._icon.classList.remove("marker-selected");
+      /* Stapel-Offset der nicht gewählten Pins auf den Preis-Wert zurücksetzen */
+      if (e !== entry && e.visible) e.marker.setZIndexOffset(zFor(e.bar));
     });
     if (entry && entry.marker._icon) entry.marker._icon.classList.add("marker-selected");
+    /* gewählter Pin immer ganz nach vorne — nie hinter einem Nachbarn versteckt */
+    if (entry) entry.marker.setZIndexOffset(100000);
   }
 
   /* ---- Auswahl ---- */

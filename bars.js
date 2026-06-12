@@ -110,5 +110,36 @@ window.BARS = [
       { name: "Chopfab Bleifrei Pale Ale",  offen: false, flasche: true,  preis: 6.50, alkoholfrei: true },
       { name: "Birra Moretti Zero",         offen: false, flasche: true,  preis: 6.50, alkoholfrei: true }
     ]
+  },
+  {
+    name: "Mr. Pickwick Pub Aarau",
+    adresse: "Graben 6, 5000 Aarau",
+    lat: 47.39307473878743,
+    lng: 8.045590471586014,
+    biere: [
+      // OFFEN / VOM FASS – Feldschlösschen (Preis = 2.5 dl)
+      { name: "Feldschlösschen Lager",               offen: true,  flasche: false, preis: 4.70, alkoholfrei: false },
+      { name: "Feldschlösschen Braufrisch",          offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Feldschlösschen Amber",               offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      // OFFEN / VOM FASS – Ausländische Biere
+      { name: "Guinness",                            offen: true,  flasche: false, preis: 9.30, alkoholfrei: false, groesse: "0.5 l" },
+      { name: "Kilkenny Irish Red Ale",              offen: true,  flasche: false, preis: 9.30, alkoholfrei: false, groesse: "0.5 l" },
+      { name: "Brooklyn IPA (USA)",                  offen: true,  flasche: false, preis: 9.00, alkoholfrei: false, groesse: "0.4 l" },
+      { name: "Hoegaarden Weissbier",                offen: true,  flasche: false, preis: 5.20, alkoholfrei: false },
+      { name: "Weihenstephan Weissbier",             offen: true,  flasche: false, preis: 5.70, alkoholfrei: false},
+      // OFFEN / VOM FASS – Cider
+      { name: "Magners Apple Cider",                 offen: true,  flasche: false, preis: 5.20, alkoholfrei: false },
+      // FLASCHEN & DOSEN
+      { name: "Desperados",                          offen: false, flasche: true,  preis: 7.00, alkoholfrei: false },
+      { name: "Corona Extra",                        offen: false, flasche: true,  preis: 8.00, alkoholfrei: false},
+      { name: "Feldschlösschen Dose",                offen: false, flasche: true,  preis: 7.50, alkoholfrei: false, groesse: "0.5 l" },
+      // ALKOHOLFREI
+      { name: "Feldschlösschen Alkoholfrei",         offen: false, flasche: true,  preis: 4.50, alkoholfrei: true },
+      // FANCY BEER DRINKS (Biermisch, vom Fass gemischt)
+      { name: "Panaché",                             offen: true,  flasche: false, preis: 4.70, alkoholfrei: false },
+      { name: "Bier Grenadine",                      offen: true,  flasche: false, preis: 4.90, alkoholfrei: false },
+      { name: "Diesel (Bier mit Cola)",              offen: true,  flasche: false, preis: 4.70, alkoholfrei: false },
+      { name: "Bananen Bier mit Bols",               offen: true,  flasche: false, preis: 8.00, alkoholfrei: false }
+    ]
   }
 ];

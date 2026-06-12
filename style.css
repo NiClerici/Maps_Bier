@@ -474,8 +474,10 @@ body {
   margin-left: -7px;
   border-width: 8px 7px 0 7px;
 }
-.pin::after {                   /* Füll-Dreieck — schmaler + 2px höher (deckt die Naht) */
-  top: calc(100% - 2px);
+.pin::after {                   /* Füll-Dreieck — sitzt 1.5px UNTER der Pill, ragt nicht
+                                   in die Ziffern (sonst weisse Kerbe unter der „0");
+                                   die Naht deckt die gleichfarbige ::before-Kontur. */
+  top: calc(100% + 1.5px);
   margin-left: -5px;
   border-width: 6px 5px 0 5px;
   border-color: var(--surface) transparent transparent transparent;

@@ -10,7 +10,7 @@ window.BARS = [
       { name: "Feldschlösschen Lager",      offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Panaché",                    offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Valaisanne Pale Ale",        offen: true,  flasche: false, preis: 6.00, alkoholfrei: false },
-      { name: "Schneider Weisse Original",  offen: true,  flasche: false, preis: 6.00, alkoholfrei: false },
+      { name: "Schneider Weisse",           offen: true,  flasche: false, preis: 6.00, alkoholfrei: false },
       // IM FLÄSCHLI (0.33 l)
       { name: "Corona Extra",               offen: false, flasche: true,  preis: 8.00, alkoholfrei: false },
       { name: "Feldschlösschen Braufrisch", offen: false, flasche: true,  preis: 6.50, alkoholfrei: false },
@@ -66,7 +66,7 @@ window.BARS = [
       { name: "Feldschlösschen Original",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Feldschlösschen Helvetic",           offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Feldschlösschen Braufrisch",         offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
-      { name: "Feldschlösschen Panaché",            offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
+      { name: "Panaché",                            offen: true,  flasche: false, preis: 5.00, alkoholfrei: false },
       { name: "Kronenburg 1664 Blanc",              offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
       { name: "Valaisanne Pale Ale",                offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
       { name: "Super Bock Lager",                   offen: true,  flasche: false, preis: 5.90, alkoholfrei: false },
@@ -86,9 +86,9 @@ window.BARS = [
       { name: "Super Bock Gluten Free",             offen: false, flasche: true,  preis: 7.50, alkoholfrei: false },
       { name: "Smirnoff Ice",                       offen: false, flasche: true,  preis: 7.50, alkoholfrei: false },
       // ALKOHOLFREI
-      { name: "Feldschlösschen Original Alkoholfrei", offen: false, flasche: true, preis: 6.20, alkoholfrei: true },
+      { name: "Feldschlösschen Alkoholfrei",        offen: false, flasche: true,  preis: 6.20, alkoholfrei: true },
       { name: "Guinness 0.0",                       offen: false, flasche: true,  preis: 8.60, alkoholfrei: true },
-      { name: "Schneider Weisse A.F.",              offen: false, flasche: true,  preis: 7.80, alkoholfrei: true, groesse: "0.5 l" }
+      { name: "Schneider Weisse Alkoholfrei",       offen: false, flasche: true,  preis: 7.80, alkoholfrei: true, groesse: "0.5 l" }
     ]
   }
 ];
